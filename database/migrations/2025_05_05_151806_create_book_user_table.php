@@ -21,7 +21,7 @@ return new class extends Migration
             $table->integer('current_page')->nullable();
             $table->date('reading_end')->nullable();
             $table->timestamps();
-
+            
             $table->unique(['user_id', 'book_id']);
         });
     }

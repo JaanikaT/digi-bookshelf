@@ -20,9 +20,12 @@ return new class extends Migration
             $table->integer('publication_year')->nullable();
             $table->string('publisher')->nullable();
             $table->integer('pages')->nullable();
+
             $table->foreignId('language_id')->nullable()->constrained();
             $table->foreignId('category_id')->nullable()->constrained();
             $table->foreignId('publication_type_id')->nullable()->constrained();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
             $table->timestamps();
         });
     }

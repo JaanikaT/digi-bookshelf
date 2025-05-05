@@ -20,7 +20,8 @@ class Book extends Model
         'author_id', 
         'language_id', 
         'category_id', 
-        'publication_type_id'
+        'publication_type_id',
+        'user_id',
     ];
 
     // Define relationships
@@ -28,7 +29,8 @@ class Book extends Model
     // A Book belongs to many Authors
     public function authors()
     {
-        return $this->belongsToMany(Author::class, 'book_author');
+        return $this->belongsToMany(Author::class, 'book_author')
+        ->withTimestamps();
     }
 
     // A Book belongs to one Language
@@ -48,4 +50,17 @@ class Book extends Model
     {
         return $this->belongsTo(PublicationType::class);
     }
+
+    public function users()
+    {
+    return $this->belongsToMany(User::class)
+        ->withPivot(['notes', 'rating', 'reading_start', 'reading_end', 'current_page'])
+        ->withTimestamps();
+    }
+
+    public function creator()
+    {
+    return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

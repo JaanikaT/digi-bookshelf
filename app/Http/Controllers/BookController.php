@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\BookController;
 use App\Models\Author;
 use App\Models\Book;
 
@@ -14,7 +13,14 @@ class BookController extends Controller
      */
     public function index()
     {
-        return view('books.index');
+        $books = Book::where("user_id", request()->user()->id)
+        ->orderBy("id", "DESC")
+        ->paginate(10);
+
+        return view('books.index', [
+            "books" => $books 
+        ]);
+        return "test";
     }
 
     /**
@@ -32,11 +38,13 @@ class BookController extends Controller
     {
         $validated = $request->validate([
             "title" => "required|string",
-            "description" => "required|string",
             "author" => "required|string",
+            "description" => "nullable|string",
             "cover" => "nullable|image"
         ]);
 
+        $validated['user_id'] = $request->user()->id;
+        
         // echo "<pre>";
         // print_r($request->all()); 
 
@@ -49,13 +57,11 @@ class BookController extends Controller
         
         // Remove author from book fields
         unset($validated['author']);
-
+        
+        
         // Create the book first (without author_id because it's many-to-many)
-        $book = Book::create([
-            ...$validated,
-            'user_id' => $request->user()->id
-        ]);
-
+        $book = Book::create($validated);
+        //dd($request->user()->id);
         
         $authorIds = [];
 

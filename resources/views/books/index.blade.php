@@ -21,24 +21,28 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-                <tr class="hover:bg-gray-100 transition">
-                    <td class="px-4 py-3">1</td>
-                    <td class="px-4 py-3 font-semibold text-gray-900">Sample Blog Title</td>
-                    <td class="px-4 py-3 text-gray-700">This is a short description of the blog...</td>
-                    <td class="px-4 py-3 text-gray-600">01 Mar, 2025</td>
-                    <td class="px-4 py-3 flex justify-center space-x-2">
-                        <a href="#" class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded shadow-md hover:bg-blue-600 transition">
-                            👁 View
-                        </a>
-                        <a href="#" class="px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded shadow-md hover:bg-yellow-600 transition">
-                            ✏️ Edit
-                        </a>
-                        <button onclick="return confirm('Are you sure you want to delete this blog?')" 
-                                class="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded shadow-md hover:bg-red-600 transition">
-                            🗑 Delete
-                        </button>
-                    </td>
-                </tr>
+
+                @foreach ( $books as $book)
+                    <tr class="hover:bg-gray-100 transition">
+                        <td class="px-4 py-3">{{$book->id}}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-900">{{$book->title}}</td>
+                        <td class="px-4 py-3 text-gray-700">{{$book->description}}</td>
+                        <td class="px-4 py-3 text-gray-600">{{$book->created_at->format("d M, Y")}}</td>
+                        <td class="px-4 py-3 flex justify-center space-x-2">
+                            <a href="#" class="px-3 py-1 bg-blue-500 text-white text-xs font-semibold rounded shadow-md hover:bg-blue-600 transition">
+                                👁 View
+                            </a>
+                            <a href="#" class="px-3 py-1 bg-yellow-500 text-white text-xs font-semibold rounded shadow-md hover:bg-yellow-600 transition">
+                                ✏️ Edit
+                            </a>
+                            <button onclick="return confirm('Are you sure you want to delete this blog?')" 
+                                    class="px-3 py-1 bg-red-500 text-white text-xs font-semibold rounded shadow-md hover:bg-red-600 transition">
+                                🗑 Delete
+                            </button>
+                        </td>
+                    </tr>
+                @endforeach
+                
             </tbody>
         </table>
     </div>
