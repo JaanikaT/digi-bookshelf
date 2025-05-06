@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
@@ -15,7 +16,7 @@ class BookController extends Controller
     {
         $books = Book::where("user_id", request()->user()->id)
         ->orderBy("id", "DESC")
-        ->paginate(10);
+        ->paginate(6);
 
         return view('books.index', [
             "books" => $books 
@@ -49,7 +50,7 @@ class BookController extends Controller
         // print_r($request->all()); 
 
         if ($request->hasFile("cover")) {
-            $book_data["cover"] = $request->file("cover")->store("books", "public");
+            $validated["cover"] = $request->file("cover")->store("books", "public");
         }
         
         // Split author string into array
@@ -80,32 +81,61 @@ class BookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Book $book)
     {
-        //
+        return view("books.show",[
+            "book" => $book
+        ]); 
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Book $book)
     {
-        //
+        return view ("books.edit",[
+            "book" => $book
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Book $book)
     {
-        //
+        $data = $request->validate([
+            "title" => "required|string",
+            
+            "description" => "nullable|string",
+            
+        ]);
+
+        if($request->hasFile("cover")){
+            if($book->cover){
+                Storage::disk("public")->delete($book->cover);
+            }
+
+            $data["cover"] = $request->file("cover")->store("books", "public");
+        }
+        
+        $book->update($data);
+
+        return to_route("books.show", $book)->with("success", "Kirje uuendatud");
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Book $book)
     {
-        //
+        // $book->authors()->detach();
+
+        if($book->cover){
+            Storage::disk("public")->delete($book->cover);
+        }
+
+        $book->delete();
+
+        return to_route("books.index")->with("success", "Kirje kustutatud");
     }
 }

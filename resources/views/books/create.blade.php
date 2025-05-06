@@ -20,17 +20,17 @@
                         class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
                         placeholder="Sisesta raamatu pealkiri">
                 @error("title")
-                    <div class="error">{{  $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-            <!-- Author Field -->
+            <!-- Author(s) Field -->
             <div class="mb-4">
-                <label for="author" class="block text-sm font-medium text-gray-700">Autor</label>
+                <label for="author" class="block text-sm font-medium text-gray-700">Autor(id)</label>
                 <input type="text" id="title" name="author" value="" 
                         class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
-                        placeholder="Sisesta raamatu autor">
+                        placeholder="Sisesta raamatu autor, eraldades mitu autorit komaga">
                 @error("author")
-                    <div class="error">{{  $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror
             </div>
 
@@ -41,7 +41,7 @@
                             class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
                             placeholder="Sisesta lühikirjeldus"></textarea>
                 @error("description")
-                    <div class="error">{{  $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror            
             </div>
 
@@ -51,7 +51,7 @@
                 <input type="file" id="cover" name="cover" 
                         class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200">
                 @error("cover")
-                    <div class="error">{{  $message }}</div>
+                    <div class="error">{{ $message }}</div>
                 @enderror        
             </div>
 
@@ -59,7 +59,7 @@
             <div class="mt-6">
                 <button type="submit" 
                         class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-700 transition">
-                    🚀 Create Blog
+                    🚀 Loo kirje
                 </button>
             </div>
         </form>
