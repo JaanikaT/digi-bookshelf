@@ -3,9 +3,14 @@
         <!-- Create Blog Button -->
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">📜 Raamatud</h2>
-            <a href="{{ route('books.create') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
-                ➕ Lisa uus raamat
-            </a>
+            <div class="flex gap-4">
+                <a href="{{ route('search') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                🔎 Otsi raamatut andmebaasist
+                </a>
+                <a href="{{ route('books.create') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                    ➕ Lisa uus raamat käsitsi
+                </a>
+            </div>
         </div>
 
         <!-- Blog Table -->
@@ -47,7 +52,6 @@
                             </td>
                         </tr>
                     @endforeach
-                    
                 </tbody>
             </table>
         </div>

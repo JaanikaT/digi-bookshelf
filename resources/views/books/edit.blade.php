@@ -14,7 +14,7 @@
             <form action="{{ route('books.update', $book) }}" method="post" enctype="multipart/form-data">
 
                 @csrf
-                @method("PATCH")
+                @method("patch")
                 <!-- Title Field -->
                 <div class="mb-4">
                     <label for="title" class="block text-sm font-medium text-gray-700">Pealkiri</label>

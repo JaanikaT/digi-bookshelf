@@ -11,9 +11,12 @@ Route::get('/', function () {
 //Books resource routes
 Route::middleware(['auth', 'verified'])->group(function(){
     Route::resource('books', BookController::class);
+    
 });
 
-
+Route::get('/search', function () {
+    return view('books.search');
+})->middleware(['auth', 'verified'])->name('search');
 
 
 Route::get('/dashboard', function () {

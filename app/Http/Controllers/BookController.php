@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
@@ -138,4 +139,29 @@ class BookController extends Controller
 
         return to_route("books.index")->with("success", "Kirje kustutatud");
     }
+
+    // public function getBookData(Response $response, string $isbn)
+    public function getBookData(Request $request, Book $book)
+    {
+       /*  $response = Http::get('https://www.googleapis.com/books/v1/volumes?q=isbn:', [
+            'isbn' => $isbn,
+            
+            'appid' => config('services.open_weather_map.key'),
+            
+        ]);
+
+        return $response->json();
+         */
+        
+        $request->validate([
+            "isbn" => "required|string",            
+        ]);
+        
+        return view("books.search",[
+            "Book" => $book
+        ]); 
+    }
+    
+
+
 }
