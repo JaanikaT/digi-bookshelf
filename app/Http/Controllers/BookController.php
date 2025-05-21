@@ -143,15 +143,6 @@ class BookController extends Controller
     // public function getBookData(Response $response, string $isbn)
     public function getBookData(Request $request, Book $book)
     {
-       /*  $response = Http::get('https://www.googleapis.com/books/v1/volumes?q=isbn:', [
-            'isbn' => $isbn,
-            
-            'appid' => config('services.open_weather_map.key'),
-            
-        ]);
-
-        return $response->json();
-         */
         
         $request->validate([
             "isbn" => "required|string",            
@@ -161,7 +152,12 @@ class BookController extends Controller
             "Book" => $book
         ]); 
     }
-    
+    public function search()
+        {
+            $googleBooksApiKey = config('services.google_books.key');
+            //dd(compact('googleBooksApiKey'));
+            return view('books.search', compact('googleBooksApiKey'));
+        }
 
 
 }

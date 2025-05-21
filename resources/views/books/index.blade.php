@@ -4,7 +4,7 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl font-bold text-gray-800">📜 Raamatud</h2>
             <div class="flex gap-4">
-                <a href="{{ route('search') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
+                <a href="{{ route('search') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-yellow-200 transition">
                 🔎 Otsi raamatut andmebaasist
                 </a>
                 <a href="{{ route('books.create') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
@@ -13,12 +13,12 @@
             </div>
         </div>
 
-        <!-- Blog Table -->
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+        <!-- Books Table -->
+        <div class=" shadow-lg rounded-lg overflow-hidden">
             <table class="w-full border-collapse">
                 <thead class="bg-gray-200 text-gray-700 uppercase text-sm">
                     <tr>
-                        <th class="px-4 py-3 text-left">ID</th>
+                        <th class="px-4 py-3 text-le">ID</th>
                         <th class="px-4 py-3 text-left">Pealkiri</th>
                         <th class="px-4 py-3 text-left">Kirjeldus</th>
                         <th class="px-4 py-3 text-left">Muutmise kuupäev</th>

@@ -14,9 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function(){
     
 });
 
-Route::get('/search', function () {
-    return view('books.search');
-})->middleware(['auth', 'verified'])->name('search');
+Route::get('/search', [BookController::class,'search'] )->middleware(['auth', 'verified'])->name('search');
 
 
 Route::get('/dashboard', function () {
