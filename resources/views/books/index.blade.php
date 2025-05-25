@@ -1,15 +1,16 @@
 <x-app-layout>  
-    <div class="container mx-auto px-4">
-        <!-- Create Blog Button -->
+    <div class="container m-4">
+        <!-- Add Book -->
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">📜 Raamatud</h2>
-            <div class="flex gap-4">
-                <a href="{{ route('search') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-yellow-200 transition">
-                🔎 Otsi raamatut andmebaasist
+            <h2 class="text-2xl font-bold text-gray-800">Kõik raamatud minu digiriiulis</h2>
+            <div class="flex flex-col gap-4">
+                <a href="{{ route('search') }}" class="inline-flex flex-wrap px-4 py-2 bg-beige-100 dark:bg-beige-300 border-2 border-solid border-beige-300 rounded-md font-semibold text-s text-gray-700 dark:text-white tracking-wide hover:bg-beige-300 dark:hover:bg-gray-600 dark:hover:border-solid dark:hover:border-beige-300 dark:hover:border-2 dark:hover:text-beige-300 dark:focus:bg-white dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-beige-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                +  Lisa Google Books'ist
                 </a>
-                <a href="{{ route('books.create') }}" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
-                    ➕ Lisa uus raamat käsitsi
+                <a href="{{ route('books.create') }}" class="inline-flex flex-wrap px-4 py-2 bg-beige-100 dark:bg-beige-300 border-2 border-solid border-beige-300 rounded-md font-semibold text-s text-gray-700 dark:text-white tracking-wide hover:bg-beige-300 dark:hover:bg-gray-600 dark:hover:border-solid dark:hover:border-beige-300 dark:hover:border-2 dark:hover:text-beige-300 dark:focus:bg-white dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-beige-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
+                    +  Lisa raamat käsitsi
                 </a>
+                
             </div>
         </div>
 

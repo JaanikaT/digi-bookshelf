@@ -27,13 +27,13 @@
         <!-- Remember Me -->
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-[#d8bc97] dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Jäta mind meelde') }}</span>
+                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-beige-300 dark:border-beige-300 shadow-sm focus:ring-beige-300 dark:focus:ring-beige-300 dark:focus:ring-offset-gray-800" name="remember">
+                <span class="ms-2 text-sm text-gray-600 dark:text-gray-300">{{ __('Jäta mind meelde') }}</span>
             </label>
         </div>
-        <div class="flex items-center justify-center my-6 w-auto">
-            <x-primary-button class="flex hover:bg-[#d8bc97] justify-center"><span>
-                {{ __('Sisene') }}</span>
+        <div class="flex my-4 justify-center">
+            <x-primary-button class="flex">
+                <span>{{ __('Sisene') }}</span>
             </x-primary-button>
         </div>
         <div class="flex flex-col my-2 gap-2">
