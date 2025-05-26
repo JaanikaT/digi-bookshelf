@@ -37,7 +37,7 @@
                     <x-input-error :messages="$errors->get('isbn')" class="mt-2" />
                 </div>
 
-                <!-- Release Year and Pages-->
+                <!-- Publication Year and Pages-->
                 <div class="flex w-full justify-between mt-3">
                     <div class="flex flex-col">
                         <x-input-label for="publication_year" :value="__('Väljaandmise aasta')" />
