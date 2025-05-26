@@ -53,14 +53,24 @@ class Book extends Model
 
     public function users()
     {
-    return $this->belongsToMany(User::class)
-        ->withPivot(['notes', 'rating', 'reading_start', 'reading_end', 'current_page'])
-        ->withTimestamps();
+        return $this->belongsToMany(User::class)
+            ->withPivot(['notes', 'rating', 'reading_start', 'reading_end', 'current_page'])
+            ->withTimestamps();
     }
 
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'book_tag_user')
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
+    
+    
+    
+    
     public function creator()
     {
-    return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
 }

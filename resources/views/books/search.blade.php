@@ -1,30 +1,27 @@
 <x-app-layout>     
-    <div class="container mx-auto px-4 py-8">
-        <!-- Page Heading -->
-        <div class="flex justify-between items-center mb-6">
-            <h1>🔎 Otsi raamatut</h1>
-            <a href="{{ route("books.index") }}" 
-                class="px-4 py-2 bg-gray-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">
-                ← Tagasi riiulile
-            </a>
-        </div>
-
-        <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
-            <form id="search" onsubmit="return yourFunction();">
-                <!-- ISBN Field -->
+    <div class="flex flex-col h-100vh m-2 sm:m-6 rounded-md p-4 sm:p-4">
+        <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
+            
+            <div class="flex justify-between gap-8">
+                <h2 class=" flex text-2xl font-bold text-gray-800">Otsi raamatu infot Google Books'ist</h2>
+                <x-href-button :href="route('books.index')" :active="request()->routeIs('search')" class="flex">
+                    {{ __('Tagasi') }}
+                </x-href-button>
+            </div>
+        
+            <form id="search" onsubmit="return searchGoogleBooks();">
+                <!-- Search via ISBN -->
                 <div class="mb-4">
-                    <label for="isbn" class="block text-sm font-medium text-gray-700">ISBN</label>
-                    <input type="text" name="isbn" id="isbn" required
-                        class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200"
-                        placeholder="Enter ISBN">
+                    <x-input-label for="search-isbn" :value="__('Sisesta ISBN')" />
+                    <x-text-input id="search-isbn" type="text" name="search-isbn" :value="old('search-isbn')" required autofocus placeholder="9781394314454">{{ old('search-isbn') }}  </x-text-input>
+                    <x-input-error :messages="$errors->get('search-isbn')" class="mt-2" />
                 </div>
 
-                <!-- Submit Button -->
-                <div class="mt-6">
-                    <button type="submit"
-                            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition">
-                        🔎 Search
-                    </button>
+                <!-- Search Button -->
+                <div class="mt-3">
+                    <x-primary-button class="items-center justify-center my-3">
+                        <span>{{ __('Otsi raamatut') }}</span>
+                    </x-primary-button>
                 </div>
             </form>
         </div>
@@ -44,70 +41,95 @@
                     @enderror      
                 </div>
 
-                <!-- Submit Button -->
-                <div class="mt-6">
-                    <button type="submit" 
-                            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition">
-                        🔎 Search
-                    </button>
-                </div>
+                
             </form>
         </div>
-    </div> --}}
-
-    <div>
-        <h2>Otsingutulemus</h2>
-        <div id="results"class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
-
-            <!-- Title -->
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-700">📌 Pealkiri</h3>
-                <input id="bookTitle" class="text-gray-900 bg-gray-100 p-3 rounded-lg shadow-sm"></input>
-            </div>
-
-             <!-- Author(s) -->
-            <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-700">📌 Autor(id)</h3>
-                <input id="bookAuthors" class="text-gray-900 bg-gray-100 p-3 rounded-lg shadow-sm">
-                    {{-- @foreach ()
-                        <li>{{}}</li>
-                    @endforeach --}}
-                </input>
-                   
-            </div>
+        </div> --}}
+        <div id="results"> <!--style="display: none;" > -->
+            <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
+                <div class="flex justify-between gap-8">
+                    <h2 class=" flex text-2xl font-bold text-gray-800">Otsingu tulemus</h2>
+                </div>
 
             
-            <!-- Action Buttons, VT ÜLE ROUTE või tegevus-->
-            <div class="flex justify-end space-x-4 mt-6">
-                <a href="" class="px-4 py-2 bg-blue-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-blue-700 transition">
-                    ✏️ Salvesta oma riiulile
-                </a>
-                
+                <form action="{{ route('books.store') }}" method="post" enctype="multipart/form-data">
+                    @csrf
+                    <!-- Title -->
+                    <div class="mt-4">
+                        <x-input-label for="title" :value="__('Pealkiri *')" />
+                        <x-text-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title')" required autofocus placeholder="">{{ old('title') }}  </x-text-input>
+                        <x-input-error :messages="$errors->get('title')" class="mt-2" />
+                    </div>
+                    
+                    <!-- Author(s) -->
+                    <div class="mt-3">
+                        <x-input-label for="author" :value="__('Autor(id) *')" />
+                        <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author')" required autocomplete="author" placeholder=""></x-text-input>
+                        <x-input-error :messages="$errors->get('author')" class="mt-2" />
+                    </div>
+                    
+                    <!-- ISBN -->
+                    <div class="mt-3">
+                        <x-input-label for="isbn" :value="__('ISBN number')" />
+                        <x-text-input id="isbn" class="block mt-1 w-full" type="text" name="isbn" :value="old('isbn')" placeholder="">{{ old('isbn') }}</x-text-input>
+                        <x-input-error :messages="$errors->get('isbn')" class="mt-2" />
+                    </div>
+
+                    <!-- Description Field -->
+                    <div class="mt-3">
+                        <x-input-label for="description" :value="__('Raamatu lühikirjeldus')" />
+                        <x-textarea id="description" name="description" maxlength="500" class="h-1/2" placeholder="">
+                            {{ old('description') }}                    
+                        </x-textarea>               
+                        <x-input-error :messages="$errors->get('description')" class="mt-2" />          
+                    </div>
+
+                    <!-- Action Buttons, VT ÜLE ROUTE või tegevus-->
+                    <div class="mt-3">
+                        <x-primary-button class="items-center justify-center my-3">
+                            <span>{{ __('Lisa raamat oma riiulisse') }}</span>
+                        </x-primary-button>
+                    </div>
+                </form>                           
             </div>
-        </div>
+        </div>    
     </div>
 
 </x-app-layout>    
 
 <script>
-function yourFunction() {
+function searchGoogleBooks() {
     const googleBooksApiKey = "{{ $googleBooksApiKey }}"; // Pass the API key to JavaScript
     
-    const isbn = document.getElementById('isbn').value.trim();
+    const isbn = document.getElementById('search-isbn').value.trim();
     if (!isbn) return false;
 
-    // Make an Axios request
+    // Make an Axios request with ISBN via API key
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=isbn:${encodeURIComponent(isbn)}&key=${googleBooksApiKey}`)
         .then(response => {
             // Handle the response data
             console.log(response.data);
             const resultContainer = document.querySelector('#results');
+
             if (response.data.items && response.data.items.length > 0) {
+                
                 const book = response.data.items[0].volumeInfo;
 
                 // Update existing input fields
-                const titleInput = document.querySelector('#bookTitle');
-                const authorsInput = document.querySelector('#bookAuthors');
+                const titleInput = document.querySelector('#title');
+                const authorsInput = document.querySelector('#author');
+                const descriptionInput = document.querySelector('#description');
+                if (descriptionInput) {
+                    descriptionInput.value = book.description || '';
+                }
+                const isbn13 = book.industryIdentifiers?.find(id => id.type === 'ISBN_13')?.identifier || '';
+                //console.log(isbn13);
+                const isbnInput = document.querySelector('#isbn');
+                if (isbnInput) {
+                    isbnInput.value = isbn13;
+                }
+                
+
 
                 if (titleInput && authorsInput) {
                     titleInput.value = book.title || 'N/A';
@@ -117,13 +139,13 @@ function yourFunction() {
                 // Show the form if hidden
                 resultContainer.style.display = 'block';
             } else {
-                alert('No results found for the given ISBN.');
+                alert("Sellise ISBN-iga raamatut ei leitud Google Books'ist.");
             }
         })
         .catch(error => {
             // Handle errors
             console.error(error);
-            alert('An error occurred while fetching book data.');
+            alert('Raamatu info toomisel esines viga.');
         });
 
     return false; // Prevent form submission

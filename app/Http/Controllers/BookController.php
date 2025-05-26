@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class BookController extends Controller
 {
@@ -15,14 +17,15 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::where("user_id", request()->user()->id)
+        $books = Book::with(['authors', 'tags'])
+        ->where("user_id", request()->user()->id)
         ->orderBy("id", "DESC")
-        ->paginate(6);
+        ->paginate(10);
 
         return view('books.index', [
             "books" => $books 
         ]);
-        return "test";
+        
     }
 
     /**
@@ -37,12 +40,23 @@ class BookController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   //ISBN dash removal
+        $isbn = str_replace('-', '', $request->input('isbn'));
+        $request->merge([
+            'isbn' => $isbn !== '' ? $isbn : null
+        ]);
+
         $validated = $request->validate([
             "title" => "required|string",
             "author" => "required|string",
+            "isbn" => ['nullable', 'regex:/^\d{10}$|^\d{13}$/'],
+            "release_year" => "nullable|numeric",
+            "pages" => "nullable|numeric",
             "description" => "nullable|string",
-            "cover" => "nullable|image"
+            "cover" => "nullable|image",
+            "notes" => "nullable|string",
+            "tag" =>"nullable|string",
+
         ]);
 
         $validated['user_id'] = $request->user()->id;
@@ -65,6 +79,7 @@ class BookController extends Controller
         $book = Book::create($validated);
         //dd($request->user()->id);
         
+        //Create authors
         $authorIds = [];
 
         foreach ($authorNames as $authorName) {
@@ -75,6 +90,28 @@ class BookController extends Controller
         // Attach authors to the book
         $book->authors()->sync($authorIds);
 
+        // Add user notes
+        $book->users()->attach($request->user()->id, [
+            'notes' => $validated['notes'] ?? null
+        ]);
+
+        // Add tags
+        if (!empty($validated['tag'])) {
+            //Tag to lowercase, if many tags, split from ,"
+            $tagNames = array_filter(array_map(function ($tag) {
+                return strtolower(trim($tag));
+            }, explode(',', $validated['tag'])));
+        
+            foreach ($tagNames as $tagName) {
+                // Create tag
+                $tag = \App\Models\Tag::firstOrCreate(['tag' => $tagName, 'user_id' => $request->user()->id ]);
+        
+                // Attach tag to book and user
+                $book->tags()->syncWithoutDetaching([
+                    $tag->id => ['user_id' => $request->user()->id]
+                ]);
+            }
+        }
 
         return to_route("books.index")->with("success", "Raamat edukalt lisatud");
     }
