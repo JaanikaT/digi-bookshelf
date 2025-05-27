@@ -1,4 +1,4 @@
-<x-app-layout>  
+<x-app-layout>
     <div class="flex flex-col flex-wrap h-100vh m-2 sm:m-6 rounded-md p-4 sm:p-4  bg-white border-solid border-beige-300 border-2">
         <!-- Index Header -->
         <div class="flex flex-wrap justify-between items-center">
@@ -8,7 +8,7 @@
                     <h2 class="flex  text-2xl font-bold text-gray-800">Siit leiad kõik digiriiulisse lisatud raamatud</h2>
                 </div>
                 <div class="flex align-bottom">
-                    <input class="w-full border-beige-300 rounded-md" placeholder="Otsi digiriiulist">
+                    <x-text-input id="all_book_search" class="block mt-1 w-full" type="text" name="all_book_search" :value="old('all_book_search')" autofocus placeholder="Otsi digiriiulist">{{ old('all_book_search') }} </x-text-input>
                 </div>
             </div>
             <!-- Add Book -->    
@@ -24,47 +24,66 @@
         </div>
 
         <!-- Books Table -->
-        <div class=" shadow-lg rounded-md overflow-hidden">
+        <div class="rounded-md overflow-hidden">
             <table class="w-full border border-beige-300 ">
-                <thead class="uppercase text-sm">
+                <thead class="uppercase text-md ">
                     <tr>
                         <th class="px-4 py-3 text-left bg-beige-300">ID</th>
                         <th class="px-4 py-3 text-left bg-beige-300">Pealkiri</th>
                         <th class="px-4 py-3 text-left bg-beige-300">Autorid</th>
-                        <th class="px-4 py-3 text-left bg-beige-300">Kirjeldus</th>
-                        <th class="px-4 py-3 text-center bg-beige-300">Vaata | muuda | kustuta</th>
+                        {{-- <th class="px-4 py-3 text-left bg-beige-300">Kirjeldus</th> --}}
+                        <th class="px-4 py-3 text-left bg-beige-300">Staatus</th>
+                        <th class="px-4 py-3  bg-beige-300"><p class="hidden md:flex justify-center">Vaata/muuda/kustuta</p></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y">
+                <tbody class="divide-y border border-beige-300">
 
                     @foreach ( $books as $book)
-                        <tr class=" bg-white hover:bg-beige-100 transition">
+                        {{-- <pre>{{ dd($book->toArray()) }}</pre> --}}
+                        @php
+                            // Find the pivot for the current logged-in user
+                            $pivot = $book->users->firstWhere('id', auth()->id())?->pivot;
+                        @endphp
+
+
+                        <tr class="!bg-white hover:bg-beige-100 transition">
                             <td class="px-4 py-3 ">{{$book->id}}</td>
-                            <td class="px-4 py-3 font-semibold text-gray-900">{{$book->title}}</td>
-                            <td class="px-4 py-3 text-gray-600">
+                            <td class="px-4 py-3 font-semibold text-gray-700">
+                                <a href="{{ route('books.show', $book) }}" class="hover:underline">{{$book->title}}</a>
+                            </td>
+                            <td class="px-4 py-3 text-gray-700">
                                 {{ $book->authors->pluck('author')->join(', ') }}
                                 {{-- {{$book->created_at->format("d M, Y")}} --}}
                             </td>
-                            <!--limit the shown char to 50 in table row -->
-                            <td class="px-4 py-3 text-gray-700">{{Str::limit($book->description, 50)}}</td>
-                            <td class="px-4 py-3 flex justify-center space-x-2">
-                                <x-href-button :href="route('books.show', $book)" :active="request()->routeIs('books.index')" class="flex">
-                                    <span>👁</span>
+                            
+                            {{-- <!--limit the shown char to 30 in table row -->
+                            <td class="px-4 py-3 text-gray-700">{{Str::limit($book->description, 30)}}</td> --}}
+                            
+                            <td class="px-4 py-3 text-gray-700">
+                                {{ $pivot?->reading_status_label ?? '' }}
+                            </td>
 
-                                </x-href-button>
-                                <x-href-button :href="route('books.edit', $book)" :active="request()->routeIs('books.index')" class="flex">
-                                    <span>✏️</span>
-                                </x-href-button>
-                                
-                                
-                                <form method="POST" action="{{ route('books.destroy', $book) }}">
-                                    @csrf
-                                    @method("delete")
-                                    <button onclick="return confirm('Oled kindel, et soovid raamatu kustutada?')" 
-                                        class="inline-flex flex-wrap px-4 py-2 bg-beige-100 dark:bg-beige-300 border-2 border-solid border-beige-300 rounded-md font-semibold text-s text-gray-700 dark:text-white tracking-wide hover:bg-red-600 dark:hover:bg-red-400 dark:hover:border-solid dark:hover:border-beige-300 dark:hover:border-2 dark:hover:text-beige-300 dark:focus:bg-white dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-beige-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-150">
-                                        🗑
-                                    </button>
-                                </form>    
+                            <!-- Action buttons -->
+                            <td class="px-4 py-3 ">
+                                <div class="flex flex-wrap md:flex-nowrap mx-auto md:justify-center gap-2">
+                                    <x-href-button :href="route('books.show', $book)" :active="request()->routeIs('books.index')" class="hidden md:flex">
+                                        <span>👁</span>
+
+                                    </x-href-button>
+                                    <x-href-button :href="route('books.edit', $book)" :active="request()->routeIs('books.index')" class="flex">
+                                        <span>✏️</span>
+                                    </x-href-button>
+                                    
+                                    
+                                    <form method="POST" action="{{ route('books.destroy', $book) }}">
+                                        @csrf
+                                        @method("delete")
+                                        <button onclick="return confirm('Oled kindel, et soovid raamatu kustutada?')" 
+                                            class="inline-flex flex-wrap px-4 py-2 bg-beige-100 dark:bg-beige-300 border-2 border-solid border-beige-300 rounded-md font-semibold text-s text-gray-700 dark:text-white tracking-wide hover:bg-red-600 dark:hover:bg-red-400 dark:hover:border-solid dark:hover:border-beige-300 dark:hover:border-2 dark:hover:text-beige-300 dark:focus:bg-white dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-beige-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-150">
+                                            🗑
+                                        </button>
+                                    </form>
+                                </div>        
                             </td>
                         </tr>
                     @endforeach

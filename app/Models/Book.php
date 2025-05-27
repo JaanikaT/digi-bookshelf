@@ -54,7 +54,8 @@ class Book extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)
-            ->withPivot(['notes', 'rating', 'reading_start', 'reading_end', 'current_page'])
+            ->using(BookUser::class)
+            ->withPivot(['notes', 'rating', 'reading_start', 'reading_end', 'current_page','reading_status'])
             ->withTimestamps();
     }
 
@@ -64,8 +65,6 @@ class Book extends Model
             ->withPivot('user_id')
             ->withTimestamps();
     }
-    
-    
     
     
     public function creator()

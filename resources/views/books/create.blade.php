@@ -69,10 +69,24 @@
                         <div class="error">{{ $message }}</div>
                     @enderror        
                 </div>
+                
+                <!-- Reading status -->
+                <div class="mt-3">
+                    <x-input-label for="reading_status" :value="__('Lugemise staatus')" />
+                    <select name="reading_status" class="form-select mt-1 p-2 w-1/2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-beige-300">
+                        <option value="">-- Vali staatus --</option>
+                        @foreach(\App\Models\BookUser::readingStatuses() as $value => $label)
+                            <option value="{{ $value }}" {{ old('reading_status', $book->reading_status ?? '') === $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                
 
                 <!-- Add user notes, optional-->
                 <div x-data="{ showDetails: false }">
-                    <button @click="showDetails = !showDetails" class="mt-4 flex justify-start  bg-beige-100 w-full text-gray-800 rounded-md">
+                    <button type="button" @click="showDetails = !showDetails" class="mt-4 flex justify-start  bg-beige-100 w-full text-gray-800 rounded-md">
                         &#11167; Soovi korral lisa kohe oma märkmed
                     </button>
 

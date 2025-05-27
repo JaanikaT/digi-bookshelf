@@ -29,7 +29,8 @@ class BookSeeder extends Seeder
                 'publication_year' =>'2025',
                 'pages' => '352',
                 'notes' => 'Pole veel lugenud',
-                'tag' => ['tehisaru', 'chatGPT'],
+                'tag' => ['tehisaru, chatGPT'],
+                'reading_status' => 'to be read'
             ],
             [
                 'title' => 'Bullerby lapsed',
@@ -39,7 +40,8 @@ class BookSeeder extends Seeder
                 'publication_year' =>'1995',
                 'pages' => '220',
                 'notes' => 'Armsad lood, vahel ka kurvad',
-                'tag' => ['lastekirjandus', 'jutustused'],
+                'tag' => ['lastekirjandus, jutustused'],
+                'reading_status' => 'read',
                 
             ],
             [
@@ -50,18 +52,20 @@ class BookSeeder extends Seeder
                 'publication_year' =>'2016',
                 'pages' => '287',
                 'notes' => 'Kaasahaarav, mõrvar selgub viimasel hetkel',
-                'tag' => ['krimi', 'Shetland, Jimmy Perez'],
+                'tag' => ['krimi, Shetland, Jimmy Perez'],
+                'reading_status' => 'in progress',
             ],
             [
                 'title' => 'Meie mürgiseimad taimed',
                 'isbn' => '9789985362679',
                 'description' => "Selles raamatus käsitletakse 21 meie kõige mürgisemat taime, mis on võimelised tapma nii inimese kui ka looma. Iga taime puhul on toodud tema põhilised tunnused, kasvukohad ning mürgisusega seotu.
                 Raamat sobib laiale lugejaskonnale, pakkudes lugusid antiikmütoloogiast ja kirjeldades mürgistusjuhtumeid üle maailma, kuid tänu rohketele viidetele ja süvitsi minevatele üksikasjadele peaks see eriti huvitav olema inimesele, kes hindab teaduspõhist faktoloogiat ja lisaks teada saamisele soovib ka aru saada.",
-                'author' => ['Ain Raal', 'Kristel Vilbaste'],
+                'author' => ['Ain Raal, Kristel Vilbaste'],
                 'publication_year' =>'2025',
                 'pages' => '352',
                 'notes' => 'Pole veel lugenud',
-                'tag' => ['mürgised taimed', 'botaanika'],
+                'tag' => ['mürgised taimed, botaanika'],
+                'reading_status' => 'wishlist',
             ]
         ];
 
@@ -78,7 +82,7 @@ class BookSeeder extends Seeder
 
             // Create authors and attach
             $authorIds = [];
-            foreach ($data['authors'] as $authorName) {
+            foreach ($data['author'] as $authorName) {
                 $author = Author::firstOrCreate(['author' => $authorName]);
                 $authorIds[] = $author->id;
             }
@@ -87,18 +91,35 @@ class BookSeeder extends Seeder
             // Attach user-specific pivot data on book_user table
             $book->users()->syncWithoutDetaching([
                 $user->id => [
-                    'notes' => $data['user_notes'] ?? null,
-                    
+                    'notes' => $data['notes'] ?? null,
+                    'reading_status'=> $data['reading_status'] ?? null,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ],
             ]);
+
+            // Tags (explode the string inside the first element of the tag array)
             $tagIds = [];
-            foreach ($data['tag'] as $tagName) {
-                $tag = Tag::firstOrCreate(['tag' => strtolower($tagName), 'user_id' => $userId]);
+
+            $tagNames = array_filter(array_map(function ($tag) {
+                return strtolower(trim($tag));
+            }, explode(',', is_array($data['tag']) ? implode(',', $data['tag']) : $data['tag'])));
+
+            foreach ($tagNames as $tagName) {
+                $tag = Tag::firstOrCreate(['tag' => $tagName, 'user_id' => $userId]);
                 $tagIds[] = $tag->id;
             }
-            $book->tags()->sync($tagIds);
+
+            $pivotData = [];
+            foreach ($tagIds as $tagId) {
+                $pivotData[$tagId] = [
+                    'user_id' => $userId,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            $book->tags()->sync($pivotData);
         }
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use phpDocumentor\Reflection\Types\Nullable;
 
 class BookController extends Controller
@@ -17,9 +18,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books = Book::with(['authors', 'tags'])
-        ->where("user_id", request()->user()->id)
-        ->orderBy("id", "DESC")
+        $books = Book::with(['authors', 'tags', 'users'])
+        ->whereHas('users', function ($query) {
+            $query->where('user_id', auth()->id());
+        })
+        ->orderBy('id', 'DESC')
         ->paginate(10);
 
         return view('books.index', [
@@ -49,13 +52,28 @@ class BookController extends Controller
         $validated = $request->validate([
             "title" => "required|string",
             "author" => "required|string",
-            "isbn" => ['nullable', 'regex:/^\d{10}$|^\d{13}$/'],
+            'isbn' => [
+                'nullable',
+                'regex:/^\d{10}$|^\d{13}$/',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        $userId = auth()->id();
+                        $exists = \App\Models\Book::where('isbn', $value)
+                            ->where('user_id', $userId)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Sinu riiulis juba on sellise ISBN.iga raamat');
+                        }
+                    }
+                },
+            ],
             "release_year" => "nullable|numeric",
             "pages" => "nullable|numeric",
             "description" => "nullable|string",
             "cover" => "nullable|image",
             "notes" => "nullable|string",
-            "tag" =>"nullable|string",
+            "tag" => "nullable|string",
+            "reading_status" => ['nullable', Rule::in(['read','in progress', 'did not finish', 'wishlist', 'pause', 'to be read'])],
 
         ]);
 
@@ -76,6 +94,7 @@ class BookController extends Controller
         
         
         // Create the book first (without author_id because it's many-to-many)
+        
         $book = Book::create($validated);
         //dd($request->user()->id);
         
@@ -90,9 +109,10 @@ class BookController extends Controller
         // Attach authors to the book
         $book->authors()->sync($authorIds);
 
-        // Add user notes
+        // Add user notes and reading status
         $book->users()->attach($request->user()->id, [
-            'notes' => $validated['notes'] ?? null
+            'notes' => $validated['notes'] ?? null,
+            'reading_status'=> $validated['reading_status'] ?? null,
         ]);
 
         // Add tags
@@ -112,7 +132,7 @@ class BookController extends Controller
                 ]);
             }
         }
-
+        //dd($validated);
         return to_route("books.index")->with("success", "Raamat edukalt lisatud");
     }
 

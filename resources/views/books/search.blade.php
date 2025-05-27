@@ -26,27 +26,8 @@
             </form>
         </div>
 
-       {{--  <!-- Form Container -->             
-        <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">    
-            <form name="search" onsubmit="yourFunction()">
-                @csrf
-                <!-- ISBN Field -->
-                <div class="mb-4">
-                    <label for="isbn" class="block text-sm font-medium text-gray-700">ISBN</label>
-                    <input type="text" name="isbn" id="isbn" value="" required
-                            class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
-                            placeholder="Muuda pealkirja">
-                    @error("search")
-                        <div class="error">{{ $message }}</div>
-                    @enderror      
-                </div>
-
-                
-            </form>
-        </div>
-        </div> --}}
-        <div id="results"> <!--style="display: none;" > -->
-            <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
+        <div id="results" style="display: none;" >
+            <div class="bg-white shadow-lg rounded-lg p-6 m-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
                 <div class="flex justify-between gap-8">
                     <h2 class=" flex text-2xl font-bold text-gray-800">Otsingu tulemus</h2>
                 </div>
@@ -97,6 +78,8 @@
 
 </x-app-layout>    
 
+
+{{-- ISBN search from Google Books --}}
 <script>
 function searchGoogleBooks() {
     const googleBooksApiKey = "{{ $googleBooksApiKey }}"; // Pass the API key to JavaScript
