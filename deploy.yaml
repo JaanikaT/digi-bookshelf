@@ -2,13 +2,40 @@ import:
   - recipe/laravel.php
 
 config:
-  repository: ''
+  #  lisada github clone url
+  repository: 'git@github.com:JaanikaT/digi-bookshelf.git'
+  keep_releases: 2
 
 hosts:
+  stage:
+  # host ja kasutajad on samad, path muutub
+    hostname: 'ta23teearu.itmajakas.ee'
+    http_user: virt123065
+    remote_user: virt123065
+    deploy_path: '~/domeenid/www.ta23teearu.itmajakas.ee/digiriiul'
 
 tasks:
-  build:
-    - run: uptime  
+ # peale deployd teeb npm 
+  npm:production:
+    - run: 'cd {{release_path}} && npm ci'
+    - run: 'cd {{release_path}} && npx vite build'
+
+  opcache:clear:
+    - run: killall php84-cgi || true
+
+  deploy:
+    # deploy järjekord
+    - 'deploy:prepare'
+    - 'deploy:vendors'
+    - 'npm:production'
+    - 'artisan:storage:link'
+    # esimese deploy jaoks välja kommenteerida, võib peale migreerimist sisse kommenteerida
+    # - 'artisan:optimize:clear'
+    # - 'artisan:optimize'
+    # - 'deploy:publish'
 
 after:
   deploy:failed: deploy:unlock
+
+before:
+  deploy:success: opcache:clear
