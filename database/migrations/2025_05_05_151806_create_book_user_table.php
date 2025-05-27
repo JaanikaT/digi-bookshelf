@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('reading_start')->nullable();
             $table->integer('current_page')->nullable();
             $table->date('reading_end')->nullable();
+            $table->enum('reading_status', ['read','in progress', 'did not finish', 'wishlist', 'pause', 'to be read'])->nullable();
             $table->timestamps();
             
             $table->unique(['user_id', 'book_id']);
