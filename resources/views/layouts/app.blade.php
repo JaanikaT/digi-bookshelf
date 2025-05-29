@@ -13,6 +13,7 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="//unpkg.com/alpinejs" defer></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-beige-100 dark:bg-gray-900">
@@ -29,9 +30,7 @@
 
             <!-- Page Content -->
             <main>
-                @session("success")
-                    <div class="success-message">{{ session("success") }}</div>
-                @endsession
+                <x-flash-message-success />
                 
                 {{ $slot }}
                 

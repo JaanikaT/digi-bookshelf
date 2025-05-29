@@ -30,9 +30,9 @@ tasks:
     - 'npm:production'
     - 'artisan:storage:link'
     # esimese deploy jaoks välja kommenteerida, võib peale migreerimist sisse kommenteerida
-    # - 'artisan:optimize:clear'
-    # - 'artisan:optimize'
-    # - 'deploy:publish'
+    - 'artisan:optimize:clear'
+    - 'artisan:optimize'
+    - 'deploy:publish'
 
 after:
   deploy:failed: deploy:unlock

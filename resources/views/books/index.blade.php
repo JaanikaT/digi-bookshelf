@@ -28,12 +28,12 @@
             <table class="w-full border border-beige-300 ">
                 <thead class="uppercase text-md ">
                     <tr>
-                        <th class="px-4 py-3 text-left bg-beige-300">ID</th>
-                        <th class="px-4 py-3 text-left bg-beige-300">Pealkiri</th>
-                        <th class="px-4 py-3 text-left bg-beige-300">Autorid</th>
+                        {{-- <th class="px-4 py-3 text-left bg-beige-300">ID</th> --}}
+                        <th class="px-4 py-2 text-left bg-beige-300">Pealkiri</th>
+                        <th class="px-4 py-2 text-left bg-beige-300">Autorid</th>
                         {{-- <th class="px-4 py-3 text-left bg-beige-300">Kirjeldus</th> --}}
-                        <th class="px-4 py-3 text-left bg-beige-300">Staatus</th>
-                        <th class="px-4 py-3  bg-beige-300"><p class="hidden md:flex justify-center">Vaata/muuda/kustuta</p></th>
+                        <th class="px-4 py-2 text-left bg-beige-300">Staatus</th>
+                        <th class="px-4 py-2  bg-beige-300"><p class="hidden md:flex justify-center">Vaata/muuda/kustuta</p></th>
                     </tr>
                 </thead>
                 <tbody class="divide-y border border-beige-300">
@@ -47,11 +47,11 @@
 
 
                         <tr class="!bg-white hover:bg-beige-100 transition">
-                            <td class="px-4 py-3 ">{{$book->id}}</td>
-                            <td class="px-4 py-3 font-semibold text-gray-700">
+                            {{-- <td class="px-4 py-3 ">{{$book->id}}</td> --}}
+                            <td class="px-4 py-1 font-semibold text-gray-700">
                                 <a href="{{ route('books.show', $book) }}" class="hover:underline">{{$book->title}}</a>
                             </td>
-                            <td class="px-4 py-3 text-gray-700">
+                            <td class="px-4 py-1 text-gray-700">
                                 {{ $book->authors->pluck('author')->join(', ') }}
                                 {{-- {{$book->created_at->format("d M, Y")}} --}}
                             </td>
@@ -59,12 +59,12 @@
                             {{-- <!--limit the shown char to 30 in table row -->
                             <td class="px-4 py-3 text-gray-700">{{Str::limit($book->description, 30)}}</td> --}}
                             
-                            <td class="px-4 py-3 text-gray-700">
+                            <td class="px-4 py-1 text-gray-700">
                                 {{ $pivot?->reading_status_label ?? '' }}
                             </td>
 
                             <!-- Action buttons -->
-                            <td class="px-4 py-3 ">
+                            <td class="px-2 py-1 ">
                                 <div class="flex flex-wrap md:flex-nowrap mx-auto md:justify-center gap-2">
                                     <x-href-button :href="route('books.show', $book)" :active="request()->routeIs('books.index')" class="hidden md:flex">
                                         <span>👁</span>
