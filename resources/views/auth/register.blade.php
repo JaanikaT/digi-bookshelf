@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('register') }}" class="flex flex-col">
         @csrf
 
         <!-- Name -->
@@ -23,7 +23,8 @@
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
                             name="password"
-                            required autocomplete="new-password" />
+                            required autocomplete="new-password"
+                            placeholder="Pikkus vähemalt 8 tähemärki" />
 
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>

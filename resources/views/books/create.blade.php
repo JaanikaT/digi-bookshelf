@@ -2,10 +2,10 @@
     <div class="flex flex-col h-100vh m-2 sm:m-6 rounded-md p-4 sm:p-4">
 
         <!-- Form Container -->
-        <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
             
             <div class="flex justify-between gap-8">
-                <h2 class=" flex text-2xl font-bold text-gray-800">Lisa raamat</h2>
+                <h2 class=" flex text-2xl font-bold text-gray-800 dark:text-beige-100">Lisa raamat</h2>
                 <x-href-button :href="route('books.index')" :active="request()->routeIs('books.create')" class="flex">
                     {{ __('Tagasi') }}
                 </x-href-button>

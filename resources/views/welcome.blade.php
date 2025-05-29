@@ -36,7 +36,7 @@
                                 <a href="/" class="flex">
                                     <x-application-logo class="w-20 h-20 fill-current" />
                                 </a>
-                                <a href="/" class="flex my-auto text-4xl font-bold">
+                                <a href="/" class="flex my-auto text-4xl font-bold dark:text-beige-300">
                                     Digiriiul
                                 </a>
                             </div>     

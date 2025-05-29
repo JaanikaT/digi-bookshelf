@@ -22,7 +22,7 @@
                         <x-application-logo class="w-20 h-20 fill-current text-gray-500" />
                     </a>
                     <a href="/" >
-                        <h1 class="flex justify-center text-4xl font-extrabold">Digiriiul</h1>
+                        <h1 class="flex justify-center text-4xl font-extrabold dark:text-beige-300">Digiriiul</h1>
                     </a>
                 </div>    
                 
