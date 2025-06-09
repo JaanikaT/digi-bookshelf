@@ -9,7 +9,7 @@ use App\Models\Tag;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
-use phpDocumentor\Reflection\Types\Nullable;
+
 
 class BookController extends Controller
 {
@@ -22,11 +22,13 @@ class BookController extends Controller
         ->whereHas('users', function ($query) {
             $query->where('user_id', auth()->id());
         })
+        ->filter(request()->only('all_book_search'))
         ->orderBy('id', 'DESC')
         ->paginate(10);
 
         return view('books.index', [
-            "books" => $books 
+            "books" => $books,
+            
         ]);
         
     }

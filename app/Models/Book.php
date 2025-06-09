@@ -72,4 +72,10 @@ class Book extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function scopeFilter($query, array $filters){
+        if($filters['all_book_search'] ?? false) {
+            $query->where('title', 'like', '%' .request('all_book_search') .'%');
+        }
+    }
+
 }

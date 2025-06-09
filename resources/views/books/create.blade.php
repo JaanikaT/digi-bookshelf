@@ -107,40 +107,10 @@
                             <x-input-error :messages="$errors->get('tag')" class="mt-2" />
                             
                         </div>
-                        
-                        {{-- <!-- Author(s) -->
-                        <div class="mt-3">
-                            <x-input-label for="author" :value="__('Autor(id) *')" />
-                            <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="old('author')" required autocomplete="author" placeholder="(Eralda mitu autorit komaga)"/>
-                            <x-input-error :messages="$errors->get('author')" class="mt-2" />
-                        </div>
-
-                        <!-- ISBN -->
-                        <div class="mt-3">
-                            <x-input-label for="isbn" :value="__('ISBN number')" />
-                            <x-text-input id="isbn" class="block mt-1 w-full" type="text" name="isbn" :value="old('isbn')" required placeholder="9781394314454">{{ old('isbn') }}</x-text-input>
-                            <x-input-error :messages="$errors->get('author')" class="mt-2" />
-                        </div>
-
-                        <!-- Release Year and Pages-->
-                        <div class="flex w-full justify-between mt-3">
-                            <div class="flex flex-col">
-                                <x-input-label for="publication_year" :value="__('Väljaandmise aasta')" />
-                                <x-text-input id="publication_year" class="flex mt-1 w-2/3" type="number" name="publication_year" :value="old('publication_year')" min="1500" max="2100" autocomplete="publication_year" placeholder=""/>
-                                <x-input-error :messages="$errors->get('publication_year')" class="mt-2" />
-                            </div>
-                            <div class="flex flex-col w-auto">
-                                <x-input-label for="pages" :value="__('Lehekülgede arv')" />
-                                <x-text-input id="pages" class="flex mt-1 w-2/3" type="number" name="pages" :value="old('pages')" placeholder=""/>
-                                <x-input-error :messages="$errors->get('pages')" class="mt-2" />
-                            </div>    
-                        </div> --}}
-                    </div>
-
-                    
+                    </div>                    
                 </div>
 
-                <!-- Submit Button -->
+                
                 <div class="mt-3">
                     <x-primary-button class="items-center justify-center my-3">
                         <span>{{ __('Lisa raamat') }}</span>

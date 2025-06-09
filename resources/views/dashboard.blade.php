@@ -1,17 +1,53 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200">
-            {{ __('Minu riiulid') }}
-        </h2>
-    </x-slot>
+    <div class="flex flex-col flex-wrap h-100vh m-2 sm:m-6 rounded-md p-4 sm:p-4  bg-white dark:bg-gray-800 border-solid border-beige-300 border-2">
+        
+        <div class="space-y-12 p-6">
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-beige-100 dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("Oled sisse logitud!") }}
+            {{-- Recently Added --}}
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold mb-6">Hiljuti lisatud raamatud</h2>
+                @if($recentBooks->isEmpty())
+                    <p class="text-center text-gray-600 italic">Lisa mõni raamat riiulisse</p>
+                @else
+                    <div class="flex flex-wrap gap-4">
+                        @foreach($recentBooks as $book)
+                            <x-book-card :book="$book" />
+                        @endforeach
+                    </div>
+                @endif    
+            </div>
+
+            {{-- In Progress --}}
+            <div>
+                <h2 class="text-2xl font-semibold mb-6">Pooleli</h2>
+                <div class="flex overflow-x-auto space-x-4">
+                    @foreach($inProgressBooks as $book)
+                        <x-book-card :book="$book" />
+                    @endforeach
                 </div>
             </div>
+            
+            {{-- Wishlist --}}
+            <div>
+                <h2 class="text-2xl font-semibold mb-6">Sooviriiul</h2>
+                <div class="flex overflow-x-auto space-x-4">
+                    @foreach($wishlistBooks as $book)
+                        <x-book-card :book="$book" />
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Completed --}}
+            <div>
+                <h2 class="text-2xl font-semibold mb-6">Hiljuti loetud</h2>
+                <div class="flex overflow-x-auto space-x-4">
+                    @foreach($completedBooks as $book)
+                        <x-book-card :book="$book" />
+                    @endforeach
+                </div>
+            </div>
+
         </div>
     </div>
 </x-app-layout>
+

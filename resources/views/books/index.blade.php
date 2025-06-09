@@ -5,11 +5,26 @@
             <!-- Title & Search Book -->
             <div class="flex flex-col w-auto gap-6 py-2">
                 <div class="flex flex-wrap">
-                    <h2 class="flex  text-2xl font-bold text-gray-800 dark:text-beige-100 ">Siit leiad kõik digiriiulisse lisatud raamatud</h2>
+                    <h2 class="flex text-2xl font-bold text-gray-800 dark:text-beige-100 ">Kõik digiriiulisse lisatud raamatud</h2>
                 </div>
-                <div class="flex align-bottom">
-                    <x-text-input id="all_book_search" class="block mt-1 w-full" type="text" name="all_book_search" :value="old('all_book_search')" autofocus placeholder="Otsi digiriiulist">{{ old('all_book_search') }} </x-text-input>
-                </div>
+                
+                <form action="/books" method="GET">
+                    <div class="flex flex-col sm:flex-row items-end gap-4 ">
+                        <x-text-input id="all_book_search" class="block mt-1 w-full" type="text" name="all_book_search"                 :value="request('all_book_search')" placeholder="Otsi oma digiriiulist" 
+                        />
+                        <button type="submit" class="inline-flex flex-wrap px-4 py-2 bg-beige-100 dark:bg-beige-300 border-2 border-solid border-beige-300 rounded-md font-semibold text-s text-gray-700 dark:hover:border-solid dark:hover:border-beige-300 dark:hover:border-2 dark:hover:text-beige-300 dark:focus:bg-white dark:active:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-beige-300 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-150">Otsi</button>
+                        
+                    </div>
+                </form>
+                
+                {{-- Show books only if no search OR if there was a search --}}
+                @if(request('all_book_search'))
+                
+                    @if($books->isEmpty())
+                        <p class="text-gray-600 italic">Ühtegi vastet ei leitud</p>
+                    @endif
+                @endif
+
             </div>
             <!-- Add Book -->    
             <div class="flex flex-col gap-2">
@@ -25,6 +40,7 @@
 
         <!-- Books Table -->
         <div class="rounded-md overflow-hidden">
+            
             <table class="w-full border border-beige-300 ">
                 <thead class="uppercase text-md ">
                     <tr>
@@ -37,7 +53,9 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y border border-beige-300">
-
+                    @if($books->isEmpty())
+                        <p class="text-gray-600 italic mt-8">Lisa mõni raamat oma riiulisse</p>
+                    @endif
                     @foreach ( $books as $book)
                         {{-- <pre>{{ dd($book->toArray()) }}</pre> --}}
                         @php
