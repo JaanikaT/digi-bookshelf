@@ -20,7 +20,7 @@
             {{-- In Progress --}}
             <div>
                 <h2 class="text-2xl font-semibold mb-6">Pooleli</h2>
-                <div class="flex overflow-x-auto space-x-4">
+                <div class="flex space-x-4">
                     @foreach($inProgressBooks as $book)
                         <x-book-card :book="$book" />
                     @endforeach
@@ -30,7 +30,7 @@
             {{-- Wishlist --}}
             <div>
                 <h2 class="text-2xl font-semibold mb-6">Sooviriiul</h2>
-                <div class="flex overflow-x-auto space-x-4">
+                <div class="flex space-x-4">
                     @foreach($wishlistBooks as $book)
                         <x-book-card :book="$book" />
                     @endforeach
@@ -40,7 +40,7 @@
             {{-- Completed --}}
             <div>
                 <h2 class="text-2xl font-semibold mb-6">Hiljuti loetud</h2>
-                <div class="flex overflow-x-auto space-x-4">
+                <div class="flex space-x-4">
                     @foreach($completedBooks as $book)
                         <x-book-card :book="$book" />
                     @endforeach

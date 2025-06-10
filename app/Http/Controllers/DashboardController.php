@@ -11,8 +11,13 @@ class DashboardController extends Controller
     
     public function index()
     {
-        $recentBooks = Book::orderBy('created_at', 'desc')->take(6)->get();
+        // $recentBooks = Book::orderBy('created_at', 'desc')->take(6)->get();
         //$inProgressBooks = Book::where('reading_status', 'in progress')->get();
+        $recentBooks = Book::whereHas('users', function ($query) {
+            $query->where('user_id', Auth::id());
+        })->orderBy('created_at', 'desc')
+          ->take(6)
+          ->get();
 
         $inProgressBooks = Book::whereHas('users', function ($query) {
             $query->where('user_id', Auth::id())

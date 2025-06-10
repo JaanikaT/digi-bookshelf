@@ -64,7 +64,7 @@ class BookController extends Controller
                             ->where('user_id', $userId)
                             ->exists();
                         if ($exists) {
-                            $fail('Sinu riiulis juba on sellise ISBN.iga raamat');
+                            $fail('Sinu riiulis juba on sellise ISBN-iga raamat');
                         }
                     }
                 },
@@ -163,24 +163,98 @@ class BookController extends Controller
      */
     public function update(Request $request, Book $book)
     {
-        $data = $request->validate([
-            "title" => "required|string",
-            
-            "description" => "nullable|string",
-            
+         // Normalize ISBN (remove dashes)
+        $isbn = str_replace('-', '', $request->input('isbn'));
+        $request->merge([
+            'isbn' => $isbn !== '' ? $isbn : null
         ]);
 
-        if($request->hasFile("cover")){
-            if($book->cover){
+        // Validate input
+        $validated = $request->validate([
+            "title" => "required|string",
+            "author" => "required|string", // comma separated authors
+            'isbn' => [
+                'nullable',
+                'regex:/^\d{10}$|^\d{13}$/',
+                function ($attribute, $value, $fail) use ($book) {
+                    if ($value) {
+                        $userId = auth()->id();
+                        // Check if another book has this ISBN for this user (exclude current book)
+                        $exists = \App\Models\Book::where('isbn', $value)
+                            ->where('user_id', $userId)
+                            ->where('id', '!=', $book->id)
+                            ->exists();
+                        if ($exists) {
+                            $fail('Sinu riiulis juba on sellise ISBN-iga raamat');
+                        }
+                    }
+                },
+            ],
+            "publication_year" => "nullable|numeric",
+            "pages" => "nullable|numeric",
+            "description" => "nullable|string",
+            "cover" => "nullable|image",
+            "notes" => "nullable|string|max:500",
+            "tag" => "nullable|string",
+            "reading_status" => ['nullable', Rule::in(['read','in progress', 'did not finish', 'wishlist', 'pause', 'to be read'])],
+        ]);
+
+        // Update cover image if uploaded
+        if ($request->hasFile("cover")) {
+            if ($book->cover) {
                 Storage::disk("public")->delete($book->cover);
             }
-
-            $data["cover"] = $request->file("cover")->store("books", "public");
+            $validated["cover"] = $request->file("cover")->store("books", "public");
         }
-        
-        $book->update($data);
 
-        return to_route("books.show", $book)->with("success", "Kirje uuendatud");
+        
+        $book->update([
+            "title" => $validated["title"],
+            "isbn" => $validated["isbn"] ?? null,
+            "publication_year" => $validated["publication_year"] ?? null,
+            "pages" => $validated["pages"] ?? null,
+            "description" => $validated["description"] ?? null,
+            "cover" => $validated["cover"] ?? $book->cover,
+        ]);
+
+        // Update authors: parse, create or get ids, sync
+        $authorNames = array_map('trim', explode(',', $validated['author']));
+        $authorIds = [];
+        foreach ($authorNames as $authorName) {
+            $author = Author::firstOrCreate(['author' => $authorName]);
+            $authorIds[] = $author->id;
+        }
+        $book->authors()->sync($authorIds);
+
+        // Update pivot table info for user notes and reading status
+        $pivotData = [
+            'notes' => $validated['notes'] ?? null,
+            'reading_status' => $validated['reading_status'] ?? null,
+        ];
+        $book->users()->syncWithoutDetaching([
+            auth()->id() => $pivotData
+        ]);
+
+    
+      
+        $tagInput = $request->input('tag');
+        $tagNames = array_filter(array_map('trim', explode(',', strtolower($tagInput))));
+        $tagSyncData = [];
+
+        foreach ($tagNames as $tagName) {
+            $tag = Tag::firstOrCreate([
+                'tag' => $tagName,
+                'user_id' => $request->user()->id,
+            ]);
+
+            // Set user_id in pivot data
+            $tagSyncData[$tag->id] = ['user_id' => $request->user()->id];
+        }
+
+        // Sync with pivot data
+        $book->tags()->sync($tagSyncData);
+        
+        return to_route("books.show", $book)->with("success", "Raamatu andmed uuendatud");
     }
 
     /**
@@ -199,7 +273,7 @@ class BookController extends Controller
         return to_route("books.index")->with("success", "Kirje kustutatud");
     }
 
-    // public function getBookData(Response $response, string $isbn)
+    
     public function getBookData(Request $request, Book $book)
     {
         

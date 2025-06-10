@@ -5,6 +5,7 @@
     'value' => '',
     'name',
     'id' => $name,
+    'class' => ''
 ])
 
 <textarea
@@ -12,6 +13,7 @@
     name="{{ $name }}"
     maxlength="{{ $maxlength }}"
     placeholder="{{ $placeholder }}"
+    class="{{ $class }}"
     @disabled($disabled)
     {{ $attributes->merge(['class' =>
         'h-1/2 border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 
@@ -19,4 +21,4 @@
         dark:focus:ring-beige-300 rounded-md shadow-sm 
         focus:placeholder-beige-300 placeholder-gray-400'
     ]) }}
-></textarea>
+>{{ $slot }}</textarea>

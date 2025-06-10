@@ -1,75 +1,118 @@
-<x-app-layout>     
-    <div class="container mx-auto px-4 py-8">
-        <!-- Page Heading -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Uuenda kirjet</h2>
-            <a href="{{ route("books.index") }}" 
-                class="px-4 py-2 bg-gray-600 text-white text-sm font-semibold rounded-lg shadow-md hover:bg-gray-700 transition">
-                ← Tagasi riiulile
-            </a>
-        </div>
+@php
+    $userPivot = $book->users->where('id', auth()->id())->first()?->pivot;
+    $readingStatus = $userPivot?->reading_status;
+    $readingStatusLabel = $readingStatus ? \App\Models\BookUser::readingStatuses()[$readingStatus] : null;
+    $tagsString = old('tag') ?? $book->tags->pluck('tag')->implode(', ');
+    $authorsString = old('author') ?? $book->authors->pluck('author')->implode(', ');
+@endphp
 
-        <!-- Form Container -->
-        <div class="bg-white shadow-lg rounded-lg p-6 max-w-2xl mx-auto">
+<x-app-layout>
+    <div class="flex flex-col h-100vh m-2 sm:m-6 rounded-md p-4 sm:p-4">
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 max-w-2xl mx-auto border-solid border-beige-300 border-2">
+            
+            <div class="flex justify-between gap-8">
+                <h2 class=" flex text-2xl font-bold text-gray-800 dark:text-beige-100">Uuenda raamatu andmeid</h2>
+                <x-href-button :href="route('books.index')" :active="request()->routeIs('books.edit')" class="flex">
+                    {{ __('Tagasi') }}
+                </x-href-button>
+            </div>
             <form action="{{ route('books.update', $book) }}" method="post" enctype="multipart/form-data">
-
                 @csrf
                 @method("patch")
-                <!-- Title Field -->
-                <div class="mb-4">
-                    <label for="title" class="block text-sm font-medium text-gray-700">Pealkiri</label>
-                    <input type="text" id="title" name="title" value="{{ $book->title }}" 
-                            class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
-                            placeholder="Muuda pealkirja">
-                    @error("title")
-                        <div class="error">{{ $message }}</div>
-                    @enderror        
-                </div>
 
-                 <!-- Author(s) Field -- EI TÖÖTA PRAEGU-->
-                <div class="mb-4">
-                    <label for="author" class="block text-sm font-medium text-gray-700">Autor(id)</label>
-                    <input type="text" id="title" name="author" value="{{ $book->author->author ?? '' }}" 
-                            class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
-                            placeholder="Muuda autorit">
-                    @error("author")
-                        <div class="error">{{ $message }}</div>
-                    @enderror        
-                </div>
-
-                <!-- Description Field -->
-                <div class="mb-4">
-                    <label for="description" class="block text-sm font-medium text-gray-700">Kirjeldus</label>
-                    <textarea id="description" name="description" rows="4" 
-                                class="mt-1 p-3 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200" 
-                                placeholder="Muuda kirjeldust">{{ $book->description }}</textarea>
-                    @error("description")
-                        <div class="error">{{ $message }}</div>
-                    @enderror            
-                </div>
-
-                <!-- Cover image Preview -->
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-gray-700">Kaanepilt</label>
-                    <img src="{{ asset('storage/' .$book->cover)}}" 
-                            alt="Kaanepilt" class="w-full h-48 object-cover rounded-lg shadow-md">
+                <div class="flex justify-between mt-8">
+                    
+                    <x-book-card :book="$book"/>
+                     
+                    <div class="flex flex-col">
+                        <div class="mt-3">
+                            <x-input-label for="reading_status" :value="__('Lugemise staatus')" />
+                            <select name="reading_status" class="form-select mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-beige-300">
+                                <option value="">-- Vali staatus --</option>
+                                @foreach(\App\Models\BookUser::readingStatuses() as $value => $label)
+                                    <option value="{{ $value }}" {{ old('reading_status', $readingStatus) === $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>   
+                    </div>                           
                 </div>
 
                 <!-- Cover image Upload -->
-                <div class="mb-4">
-                    <label for="cover" class="block text-sm font-medium text-gray-700">Vaheta kaanepilt</label>
+                <div class="mt-3">
+                    <x-input-label for="cover" :value="__('Vaheta kaanepilt')" />
+                    {{-- <label for="cover" class="block text-sm font-medium text-gray-700">Vaheta kaanepilt</label> --}}
                     <input type="file" id="cover" name="cover" 
-                            class="mt-1 p-2 w-full border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-200">
+                            class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-beige-300">
                 </div>
 
-                <!-- Submit Button -->
-                <div class="mt-6">
-                    <button type="submit" 
-                            class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition">
-                        ✅ Uuenda kirjet
-                    </button>
+                <!-- Title -->
+                <div class="mt-8">
+                    <x-input-label for="title" :value="__('Pealkiri *')" />
+                    <x-text-input id="title" class="block mt-1 w-full" type="text" name="title" :value="old('title', $book->title)" required autofocus></x-text-input>
+                    <x-input-error :messages="$errors->get('title')" class="mt-2" />
                 </div>
+
+                <!-- Author(s) -->
+                <div class="mt-3">
+                    <x-input-label for="author" :value="__('Autor(id) *')" />
+                    <x-text-input id="author" class="block mt-1 w-full" type="text" name="author" :value="$authorsString" required autocomplete="author"></x-text-input>
+                    <x-input-error :messages="$errors->get('author')" class="mt-2" />
+                </div>
+
+                <!-- ISBN -->
+                <div class="mt-3">
+                    <x-input-label for="isbn" :value="__('ISBN number')" />
+                    <x-text-input id="isbn" class="block mt-1 w-full" type="text" name="isbn" :value="old('isbn', $book->isbn)">{{ old('isbn') }}</x-text-input>
+                    <x-input-error :messages="$errors->get('isbn')" class="mt-2" />
+                </div>
+
+                <!-- Publication Year and Pages-->
+                <div class="flex w-full justify-between gap-4 mt-3">
+                    <div class="flex flex-col">
+                        <x-input-label for="publication_year" :value="__('Väljaandmise aasta')" />
+                        <x-text-input id="publication_year" class="flex mt-1 w-2/3" type="number" name="publication_year" :value="old('publication_year', $book->publication_year)" min="1500" max="2100" autocomplete="publication_year" />
+                        <x-input-error :messages="$errors->get('publication_year')" class="mt-2" />
+                    </div>
+                    <div class="flex flex-col w-auto">
+                        <x-input-label for="pages" :value="__('Lehekülgede arv')" />
+                        <x-text-input id="pages" class="flex mt-1 w-2/3" type="number" name="pages" :value="old('pages',  $book->pages)"/>
+                        <x-input-error :messages="$errors->get('pages')" class="mt-2" />
+                    </div>    
+                </div>
+                
+                <!-- Description Field -->
+                <div class="mt-3">
+                    <x-input-label for="description" :value="__('Raamatu lühikirjeldus')" />
+                    <x-textarea id="description" name="description" maxlength="500" class="h-1/2" placeholder="Max 500 tähemärki">{{ $book->description }}</x-textarea>            
+                    <x-input-error :messages="$errors->get('description')" class="mt-2" />          
+                </div>
+
+                <!-- Tags -->
+                <div class="mt-3">
+                    <x-input-label for="tag" :value="__('Sildid')" />
+                    <x-text-input id="tag" class="block mt-1 w-full" type="text" name="tag" :value="$tagsString" autocomplete="tag" placeholder="(Eralda erinevad sildid komaga)"/>
+                    <x-input-error :messages="$errors->get('tag')" class="mt-2" />
+                    
+                </div>
+
+                <!-- User notes -->
+                <div class="mt-3">
+                    <x-input-label for="notes" :value="__('Minu märkmed')" />
+                    <x-textarea id="notes" name="notes" maxlength="500" class="h-1/2" placeholder="Max 500 tähemärki">
+                        {{ old('notes', $userPivot->notes) }}                    
+                    </x-textarea>               
+                    <x-input-error :messages="$errors->get('notes')" class="mt-2" />          
+                </div>
+
+                <div class="mt-3">
+                    <x-primary-button class="items-center justify-center my-3">
+                        <span>{{ __('Uuenda andmeid') }}</span>
+                    </x-primary-button>
+                </div>
+
             </form>
-        </div>
-    </div>
+        </div>    
+    <div>    
 </x-app-layout>    

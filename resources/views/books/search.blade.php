@@ -56,6 +56,20 @@
                         <x-input-error :messages="$errors->get('isbn')" class="mt-2" />
                     </div>
 
+                    <!-- Publication Year and Pages-->
+                    <div class="flex w-full justify-between mt-3">
+                        <div class="flex flex-col">
+                            <x-input-label for="publication_year" :value="__('Väljaandmise aasta')" />
+                            <x-text-input id="publication_year" class="flex mt-1 w-2/3" type="number" name="publication_year" :value="old('publication_year')" min="1500" max="2100" autocomplete="publication_year" placeholder=""/>
+                            <x-input-error :messages="$errors->get('publication_year')" class="mt-2" />
+                        </div>
+                        <div class="flex flex-col w-auto">
+                            <x-input-label for="pages" :value="__('Lehekülgede arv')" />
+                            <x-text-input id="pages" class="flex mt-1 w-2/3" type="number" name="pages" :value="old('pages')" placeholder=""/>
+                            <x-input-error :messages="$errors->get('pages')" class="mt-2" />
+                        </div>    
+                    </div>
+
                     <!-- Description Field -->
                     <div class="mt-3">
                         <x-input-label for="description" :value="__('Raamatu lühikirjeldus')" />
@@ -65,7 +79,47 @@
                         <x-input-error :messages="$errors->get('description')" class="mt-2" />          
                     </div>
 
-                    <!-- Action Buttons, VT ÜLE ROUTE või tegevus-->
+                     <!-- Cover Image Upload -->
+                    <div class="mt-3">
+                        <x-input-label for="cover" :value="__('Kaanepilt')" />
+                        <input type="file" id="cover" name="cover" :value="old('cover')" placeholder=""
+                                class="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-beige-300">
+                        @error("cover")
+                            <div class="error">{{ $message }}</div>
+                        @enderror        
+                    </div>
+                    
+                    <!-- Reading status -->
+                    <div class="mt-3">
+                        <x-input-label for="reading_status" :value="__('Lugemise staatus')" />
+                        <select name="reading_status" class="form-select mt-1 p-2 w-1/2 border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-beige-300">
+                            <option value="">-- Vali staatus --</option>
+                            @foreach(\App\Models\BookUser::readingStatuses() as $value => $label)
+                                <option value="{{ $value }}" {{ old('reading_status', $book->reading_status ?? '') === $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <!-- User notes -->
+                    <div class="mt-3">
+                        <x-input-label for="notes" :value="__('Minu märkmed')" />
+                        <x-textarea id="notes" name="notes" maxlength="500" class="h-1/2" placeholder="Max 500 tähemärki">
+                            {{ old('notes') }}                    
+                        </x-textarea>               
+                        <x-input-error :messages="$errors->get('notes')" class="mt-2" />          
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div class="mt-3">
+                        <x-input-label for="tag" :value="__('Sildid')" />
+                        <x-text-input id="tag" class="block mt-1 w-full" type="text" name="tag" :value="old('tag')" autocomplete="tag" placeholder="(Eralda erinevad sildid komaga)"/>
+                        <x-input-error :messages="$errors->get('tag')" class="mt-2" />
+                        
+                    </div>
+
+
                     <div class="mt-3">
                         <x-primary-button class="items-center justify-center my-3">
                             <span>{{ __('Lisa raamat oma riiulisse') }}</span>
@@ -111,6 +165,10 @@ function searchGoogleBooks() {
                 if (isbnInput) {
                     isbnInput.value = isbn13;
                 }
+                // const publishedDate = document.querySelector('#publication_year');
+                // console.log(publishedDate);
+                // const pageCount = document.querySelector('#pages');
+                
                 
 
 
